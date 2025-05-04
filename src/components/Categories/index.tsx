@@ -9,10 +9,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { CategoriesTable } from "./CategoriesTable";
 import { CategoryModal } from "./CategoryModal";
+import { FaCog } from "react-icons/fa";
+import { useStore } from "@/hooks/useStore";
 
 export type Category = {
   id: string;
@@ -20,9 +21,7 @@ export type Category = {
 };
 
 export function Categories() {
-  const [categories, setCategories] = useState<Category[]>(
-    JSON.parse(localStorage.getItem("categories") || "[]")
-  );
+  const { categories, setCategories } = useStore();
 
   function addCategory(name: string) {
     const newCategory = {
@@ -47,8 +46,8 @@ export function Categories() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-full">
-          Gerenciar categorias
+        <Button variant="outline">
+          <FaCog />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-[80%]">

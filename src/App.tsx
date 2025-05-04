@@ -1,16 +1,13 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCog } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { ExpenseModal } from "./components/Expenses/ExpenseModal";
 import { ExpensesTable } from "./components/Expenses/ExpensesTable";
 import { Graphs } from "./components/Graphs";
-import { Categories } from "./components/ui/Categories";
+import { useStore } from "./hooks/useStore";
+import { useState } from "react";
+import { ExpensesCard } from "./components/Expenses/ExpensesCard";
 
 export interface Expense {
   id: string;
@@ -21,19 +18,15 @@ export interface Expense {
 }
 
 function App() {
-  const [date, setDate] = useState(dayjs());
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const { expenses, setExpenses, date, setDate } = useStore();
+  const [layout, setLayout] = useState(
+    localStorage.getItem("layout") || "card"
+  );
 
-  function getExpenses() {
-    return JSON.parse(localStorage.getItem("expenses") || "[]").filter(
-      (expense: Expense) =>
-        dayjs(expense.dueDate).format("YYYY-MM") === date.format("YYYY-MM")
-    );
+  function changeLayout(layout: string) {
+    setLayout(layout);
+    localStorage.setItem("layout", layout);
   }
-
-  useEffect(() => {
-    setExpenses(getExpenses());
-  }, [date]);
 
   function addExpense(
     name: string,
@@ -54,7 +47,10 @@ function App() {
     );
 
     setExpenses(joinedExpenses);
-    localStorage.setItem("expenses", JSON.stringify(joinedExpenses));
+    localStorage.setItem(
+      date.format("YYYY-MM"),
+      JSON.stringify(joinedExpenses)
+    );
   }
 
   function removeExpense(id: string) {
@@ -71,13 +67,30 @@ function App() {
       <div className="w-full h-10 bg-slate-300 shadow-sm flex items-center justify-around">
         <ExpenseModal addExpense={addExpense} />
 
-        <Popover>
-          <PopoverTrigger asChild>
-            <FaCog />
-          </PopoverTrigger>
-          <PopoverContent className="w-80">
-            <Categories />
-          </PopoverContent>
+        <Popover
+          title="Layout"
+          content={
+            <div className="flex flex-col gap-2">
+              <p
+                onClick={() => changeLayout("card")}
+                className={
+                  layout === "card" ? "bg-slate-200 rounded-sm p-2" : " p-2"
+                }
+              >
+                Card
+              </p>
+              <p
+                onClick={() => changeLayout("table")}
+                className={
+                  layout === "table" ? "bg-slate-200 rounded-sm p-2" : " p-2"
+                }
+              >
+                Tabela
+              </p>
+            </div>
+          }
+        >
+          <FaCog />
         </Popover>
 
         <Graphs />
@@ -88,7 +101,11 @@ function App() {
         <FaChevronRight onClick={() => setDate(date.add(1, "month"))} />
       </div>
 
-      <ExpensesTable expenses={expenses} removeExpense={removeExpense} />
+      {layout === "table" ? (
+        <ExpensesTable expenses={expenses} removeExpense={removeExpense} />
+      ) : (
+        <ExpensesCard expenses={expenses} removeExpense={removeExpense} />
+      )}
     </div>
   );
 }

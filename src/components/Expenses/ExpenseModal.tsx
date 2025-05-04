@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,12 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { Category } from "../ui/Categories";
+import { Categories } from "../Categories";
 
 import {
   Select,
@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useStore } from "@/hooks/useStore";
 
 export function ExpenseModal({
   addExpense,
@@ -38,13 +39,7 @@ export function ExpenseModal({
   const [dueDate, setDueDate] = useState("");
   const [open, setOpen] = useState(false);
 
-  const [categories, setCategories] = useState<Category[]>(
-    JSON.parse(localStorage.getItem("categories") || "[]")
-  );
-
-  useEffect(() => {
-    setCategories(JSON.parse(localStorage.getItem("categories") || "[]"));
-  }, []);
+  const { categories } = useStore();
 
   function cleanForm() {
     setName("");
@@ -118,18 +113,21 @@ export function ExpenseModal({
           <Label htmlFor="categoryId" className="text-right">
             Categoria
           </Label>
-          <Select value={categoryId} onValueChange={setCategoryId}>
-            <SelectTrigger className="w-[100%]">
-              <SelectValue placeholder="Selecione uma categoria" />
-            </SelectTrigger>
-            <SelectContent className="z-[99999999999]">
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Select value={categoryId} onValueChange={setCategoryId}>
+              <SelectTrigger className="w-[100%]">
+                <SelectValue placeholder="Selecione uma categoria" />
+              </SelectTrigger>
+              <SelectContent className="z-[99999999999]">
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Categories />
+          </div>
         </div>
         <DialogFooter>
           <Button onClick={handleSubmit}>Salvar</Button>

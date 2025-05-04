@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import dayjs from "dayjs";
-import { Category } from "../ui/Categories";
+import { Category } from "../Categories";
 import { Button } from "@/components/ui/button";
 import { FaTrash } from "react-icons/fa";
 

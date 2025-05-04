@@ -1,18 +1,13 @@
-import React from "react";
+import { useStore } from "@/hooks/useStore";
 import { Pie } from "@ant-design/charts";
-import { Expense } from "@/App";
-import { Category } from "../ui/Categories";
+import React from "react";
 
-const DemoChangeData = () => {
+const ExpensesByCategory = () => {
   const [data, setData] = React.useState<
     { type: string | undefined; value: number }[]
   >([]);
-  const expenses: Expense[] = JSON.parse(
-    localStorage.getItem("expenses") || "[]"
-  );
-  const categories: Category[] = JSON.parse(
-    localStorage.getItem("categories") || "[]"
-  );
+
+  const { expenses, categories } = useStore();
 
   function getData() {
     const data: { type: string | undefined; value: number }[] = [];
@@ -61,4 +56,4 @@ const DemoChangeData = () => {
   return <Pie {...config} />;
 };
 
-export default DemoChangeData;
+export default ExpensesByCategory;

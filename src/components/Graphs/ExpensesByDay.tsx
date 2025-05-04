@@ -1,4 +1,4 @@
-import { Expense } from "@/App";
+import { useStore } from "@/hooks/useStore";
 import { Bar } from "@ant-design/charts";
 import React from "react";
 
@@ -10,7 +10,8 @@ function formatDate(dateStr: string): string {
   return `${day}/${month}/${year}`;
 }
 
-const ExpensesByDay: React.FC = () => {
+const ExpensesByDay = () => {
+  const { expenses } = useStore();
   const [data, setData] = React.useState<
     {
       date: string;
@@ -19,9 +20,6 @@ const ExpensesByDay: React.FC = () => {
   >([]);
 
   React.useEffect(() => {
-    const expenses: Expense[] = JSON.parse(
-      localStorage.getItem("expenses") || "[]"
-    );
     // Agrupa despesas por dia
     const grouped: Record<string, number> = {};
     expenses.forEach((expense) => {
@@ -38,13 +36,14 @@ const ExpensesByDay: React.FC = () => {
       value,
     }));
     // Ordena por data (precisa converter de volta para Date para ordenar corretamente)
-    chartData.sort(
-      (a, b) => {
-        const [da, ma, ya] = a.date.split("/");
-        const [db, mb, yb] = b.date.split("/");
-        return new Date(`${ya}-${ma}-${da}`).getTime() - new Date(`${yb}-${mb}-${db}`).getTime();
-      }
-    );
+    chartData.sort((a, b) => {
+      const [da, ma, ya] = a.date.split("/");
+      const [db, mb, yb] = b.date.split("/");
+      return (
+        new Date(`${ya}-${ma}-${da}`).getTime() -
+        new Date(`${yb}-${mb}-${db}`).getTime()
+      );
+    });
     setData(chartData);
   }, []);
 

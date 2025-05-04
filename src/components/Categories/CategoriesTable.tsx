@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { Button } from "../button";
+import { Button } from "../ui/button";
 import { Category } from ".";
 
 export function CategoriesTable({
